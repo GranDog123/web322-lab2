@@ -1,6 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
+
+const itemsFilePath = path.join(__dirname, 'data', 'items.json');
+const categoriesFilePath = path.join(__dirname, 'data', 'categories.json');
+
 let items = [];
 let categories = [];
 
