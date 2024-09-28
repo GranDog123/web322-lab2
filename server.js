@@ -1,16 +1,16 @@
-/**
-* WEB322 - Assignment 2
-* I declare that this assignment is my own work in accordance with Seneca Academic Policy.
-* No part of this assignment has been copied manually or electronically from any other source
-* (including web sites and friends) or distributed to other students.
-* I understand that if caught doing so, I will receive zero on this assignment and possibly
-* fail the entire course.
-* Name: Daniel Park
-* Student ID: 180465223
-* Date: sep 17
-* Vercel Web App URL: web-322-murex.vercel.app
-* GitHub Repository URL: https://github.com/GranDog123/WEB322
-**/
+/*********************************************************************************
+WEB322 – Assignment 02
+I declare that this assignment is my own work in accordance with Seneca Academic Policy.  
+No part of this assignment has been copied manually or electronically from any other source (including 3rd party web sites) or distributed to other students.
+
+Name: Daniel Park
+Student ID:  180465223
+Date: 9/29
+Vercel Web App URL: https://web322-lab2-one.vercel.app/about
+GitHub Repository URL: https://github.com/GranDog123/web322-lab2/tree/master
+
+********************************************************************************/ 
+
 
 const express = require('express');
 const path = require('path');
