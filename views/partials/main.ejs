@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/main.css">
+    <title><%= title || "Default Title" %></title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li class="<%= activeRoute === '/shop' ? 'active' : '' %>"><a href="/shop">Shop</a></li>
+            <li class="<%= activeRoute === '/about' ? 'active' : '' %>"><a href="/about">About</a></li>
+            <li class="<%= activeRoute === '/items/add' ? 'active' : '' %>"><a href="/items/add">Add Item</a></li>
+            <li class="<%= activeRoute === '/items' ? 'active' : '' %>"><a href="/items">Items</a></li>
+            <li class="<%= activeRoute === '/categories' ? 'active' : '' %>"><a href="/categories">categories</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <%- body %>
+    </div>
+</body>
+</html>
+

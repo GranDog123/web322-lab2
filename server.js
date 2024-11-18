@@ -21,48 +21,178 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const storeService = require('./store-service'); 
+const expressLayouts = require('express-ejs-layouts');
+const helpers = require('./helpers');
+const { getAllItems }  = require('./store-service');
+const { getCategories }  = require('./store-service');
+const { engine } = require('express-handlebars');
+const stripJs = require('strip-js');
+const itemData = require('./store-service');
+app.locals.helpers = helpers;
+
+app.use(expressLayouts);
+app.set('layout', 'partials/main');
 
 const PORT = process.env.PORT || 8080;
 
-app.use(express.static('public'));
+app.engine('hbs', engine({
+    extname: 'hbs',
+    helpers: {
+        safeHTML: function(context) {
+            return stripJs(context);
+        }
+    }
+}));
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
 
-app.get('/', (req, res) => {
-  res.redirect('/about');
+app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+    res.locals.activeRoute = req.path;
+    next();
 });
+app.use((req, res, next) => {
+    let route = req.path.substring(1);
+    app.locals.activeRoute = "/" + (isNaN(route.split('/')[1]) ? route.replace(/\/(?!.*)/, "") : route.replace(/\/(.*)/, ""));
+    app.locals.viewingCategory = req.query.category;
+    next();
+});
+
+// Redirect the default route to /shop
+app.get('/', (req, res) => {
+    res.redirect('/shop');
+});
+
+// Handle 404 errors
+//app.use((req, res) => {
+    //res.status(404).render('404', { title: '404 - Page Not Found' });
+//});
 
 app.get('/about', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'about.html'));
+    res.render('about', { layout: 'partials/main', title: "Daniel Park" });
 });
+
+app.get('/items/add', (req, res) => {
+    res.render('addItem', { layout: 'partials/main', title: "Daniel Park" });
+});
+  
 
 app.get('/shop', (req, res) => {
-  storeService.getPublishedItems()
-    .then((publishedItems) => {
-      res.json(publishedItems);
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err });
-    });
+    const category = req.query.category;
+    let viewData = {};
+
+    itemData.getCategories()
+        .then(categories => {
+            viewData.categories = categories;
+            return itemData.getPublishedItems();
+        })
+        .then(items => {
+            viewData.items = items;
+
+            if (category) {
+                return itemData.getPublishedItemsByCategory(category);
+            } else {
+                return itemData.getPublishedItems();
+            }
+        })
+        .then(itemsByCategory => {
+            viewData.itemsByCategory = itemsByCategory;
+
+            if (req.query.id) {
+                return itemData.getItemById(req.query.id);
+            } else {
+                return null;
+            }
+        })
+        .then(item => {
+            if (item) {
+                viewData.item = item;
+            }
+            res.render('shop', { data: viewData, viewingCategory: category, title: "Shop - Daniel Park" });
+        })
+        .catch(err => {
+            viewData.message = "An error occurred while fetching items or categories";
+            res.render('shop', { data: viewData, title: "Shop - Error" });
+        });
 });
+
+// Shop route for specific item by ID
+app.get('/shop/:id', (req, res) => {
+    const itemId = req.params.id;
+    let viewData = {};
+
+    itemData.getCategories()
+        .then(categories => {
+            viewData.categories = categories;
+            return itemData.getPublishedItems();
+        })
+        .then(items => {
+            viewData.items = items;
+
+            return itemData.getItemById(itemId);
+        })
+        .then(item => {
+            if (item) {
+                viewData.item = item;
+            } else {
+                viewData.message = "Item not found";
+            }
+            res.render('shop', { data: viewData, title: `Item Details - ${item ? item.title : "Not Found"}` });
+        })
+        .catch(err => {
+            viewData.message = "An error occurred while fetching items or categories";
+            res.render('shop', { data: viewData, title: "Shop - Error" });
+        });
+});
+
+
+
+
+
 
 app.get('/items', (req, res) => {
-  storeService.getAllItems()
-    .then((items) => {
-      res.json(items);
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err });
-    });
+    getAllItems()
+        .then(data => {
+            console.log("Fetched Items: ", data);
+
+            if (data && data.length > 0) {
+                res.render('items', { items: data, title: 'Items List' });
+            } else {
+                res.render('items', { items: [], message: 'No items available', title: 'Items List' });
+            }
+        })
+        .catch(err => {
+            console.error("Error fetching items: ", err);
+            res.render('items', { items: [], message: 'No results', title: 'Items List' });
+        });
 });
 
+
+
+
 app.get('/categories', (req, res) => {
-  storeService.getCategories()
-    .then((categories) => {
-      res.json(categories);
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err });
-    });
+    getCategories() // Assuming this function fetches categories from your data source
+        .then(data => {
+            console.log("Fetched Categories: ", data);
+
+            // If categories are fetched, pass them along with the title
+            if (data && data.length > 0) {
+                res.render('categories', { categories: data, title: 'Categories List' });
+            } else {
+                // If no categories are found, pass an empty array with a message and title
+                res.render('categories', { categories: [], message: 'No categories available', title: 'Categories List' });
+            }
+        })
+        .catch(err => {
+            console.error("Error fetching categories: ", err);
+            // If there’s an error, render with empty categories, an error message, and the title
+            res.render('categories', { categories: [], message: 'No results', title: 'Categories List' });
+        });
 });
+
+
 
 app.get('/items/add', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'addItem.html'));

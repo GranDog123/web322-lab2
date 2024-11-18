@@ -85,6 +85,17 @@ module.exports.getItemById = (id) => {
   });
 };
 
+module.exports.getPublishedItemsByCategory = (category) => {
+  return new Promise((resolve, reject) => {
+      const filteredItems = items.filter(item => item.published === true && item.category === category);
+      if (filteredItems.length > 0) {
+          resolve(filteredItems);
+      } else {
+          reject("No published items found for this category");
+      }
+  });
+};
+
 
 module.exports.initialize = () => {
   return new Promise((resolve, reject) => {

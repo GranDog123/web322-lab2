@@ -1,0 +1,31 @@
+<!-- categories.ejs -->
+<div class="row">
+    <div class="col-md-12">
+        <h2>Categories</h2>
+        <hr />
+        <% if (categories && categories.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Category ID</th>
+                            <th>Category Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% categories.forEach(category => { %>
+                            <tr>
+                                <td><a href="/items?category=<%= category.id %>"><%= category.id %></a></td>
+                                <td><a href="/items?category=<%= category.id %>"><%= category.category %></a></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="col-md-12 text-center">
+                <strong><%= message %></strong>
+            </div>
+        <% } %>
+    </div>
+</div>
