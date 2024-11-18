@@ -35,16 +35,16 @@ app.set('layout', 'partials/main');
 
 const PORT = process.env.PORT || 8080;
 
-app.engine('hbs', engine({
-    extname: 'hbs',
-    helpers: {
-        safeHTML: function(context) {
-            return stripJs(context);
-        }
-    }
-}));
-app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'views'));
+//app.engine('hbs', engine({
+   // extname: 'hbs',
+    //helpers: {
+    //    safeHTML: function(context) {
+      //      return stripJs(context);
+     //   }
+  //  }
+//}));
+//app.set('view engine', 'hbs');
+//app.set('views', path.join(__dirname, 'views'));
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
@@ -60,7 +60,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// Redirect the default route to /shop
 app.get('/', (req, res) => {
     res.redirect('/shop');
 });
@@ -118,7 +117,6 @@ app.get('/shop', (req, res) => {
         });
 });
 
-// Shop route for specific item by ID
 app.get('/shop/:id', (req, res) => {
     const itemId = req.params.id;
     let viewData = {};
@@ -147,11 +145,6 @@ app.get('/shop/:id', (req, res) => {
         });
 });
 
-
-
-
-
-
 app.get('/items', (req, res) => {
     getAllItems()
         .then(data => {
@@ -169,25 +162,19 @@ app.get('/items', (req, res) => {
         });
 });
 
-
-
-
 app.get('/categories', (req, res) => {
-    getCategories() // Assuming this function fetches categories from your data source
+    getCategories() 
         .then(data => {
             console.log("Fetched Categories: ", data);
 
-            // If categories are fetched, pass them along with the title
             if (data && data.length > 0) {
                 res.render('categories', { categories: data, title: 'Categories List' });
             } else {
-                // If no categories are found, pass an empty array with a message and title
                 res.render('categories', { categories: [], message: 'No categories available', title: 'Categories List' });
             }
         })
         .catch(err => {
             console.error("Error fetching categories: ", err);
-            // If there’s an error, render with empty categories, an error message, and the title
             res.render('categories', { categories: [], message: 'No results', title: 'Categories List' });
         });
 });
