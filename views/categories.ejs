@@ -1,31 +1,24 @@
-<!-- categories.ejs -->
-<div class="row">
-    <div class="col-md-12">
-        <h2>Categories</h2>
-        <hr />
-        <% if (categories && categories.length > 0) { %>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Category ID</th>
-                            <th>Category Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% categories.forEach(category => { %>
-                            <tr>
-                                <td><a href="/items?category=<%= category.id %>"><%= category.id %></a></td>
-                                <td><a href="/items?category=<%= category.id %>"><%= category.category %></a></td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
-        <% } else { %>
-            <div class="col-md-12 text-center">
-                <strong><%= message %></strong>
-            </div>
-        <% } %>
-    </div>
-</div>
+<h2>Categories List</h2>
+<a href="/categories/add" class="btn btn-success">Add Category</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each categories}}
+        <tr>
+            <td>{{this.category}}</td>
+            <td>
+                <a href="/categories/delete/{{this.id}}" class="btn btn-danger">Remove</a>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{#if message}}
+<p>{{message}}</p>
+{{/if}}

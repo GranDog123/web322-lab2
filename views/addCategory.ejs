@@ -1,0 +1,34 @@
+<h2>Add Category</h2>
+<form action="/categories/add" method="POST">
+    <div class="form-group">
+        <label for="category">Category:</label>
+        <input type="text" id="category" name="category" class="form-control" autofocus required>
+    </div>
+    <button type="submit" class="btn btn-success">Add Category</button>
+</form>
+
+categories.hbs:
+
+<h2>Categories List</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th></th> 
+        </tr>
+    </thead>
+    <tbody>
+        {{#each categories}}
+        <tr>
+            <td>{{this.category}}</td>
+            <td>
+                <a href="/categories/delete/{{this.id}}" class="btn btn-danger">Remove</a>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{#if message}}
+<p>{{message}}</p>
+{{/if}}
