@@ -35,7 +35,6 @@ app.set('layout', 'partials/main');
 
 const PORT = process.env.PORT || 8080;
 
-// Set up view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
@@ -59,10 +58,10 @@ app.get('/', (req, res) => {
 
 
 app.use(clientSessions({
-    cookieName: "session", // the cookie name
-    secret: "jiawnbsdgoinlisafngbkjl3298473857923125", // replace this with a strong secret key
-    duration: 2 * 60 * 1000, // session duration in milliseconds (1 day)
-    activeDuration: 1000 * 60, // extend session by 5 minutes if active
+    cookieName: "session", 
+    secret: "jiawnbsdgoinlisafngbkjl3298473857923125", 
+    duration: 2 * 60 * 1000, 
+    activeDuration: 1000 * 60, 
 }));
 
 app.use((req, res, next) => {
@@ -81,7 +80,7 @@ const sequelize = new Sequelize('SenecaDB', 'SenecaDB_owner', 'z8PgN5uZWjcD', {
   });
   
 
-  // Define a "Project" model
+ 
   
   const Project = sequelize.define('Project', {
     title: Sequelize.STRING,
@@ -96,11 +95,9 @@ const sequelize = new Sequelize('SenecaDB', 'SenecaDB_owner', 'z8PgN5uZWjcD', {
     }
 }
 
-  // synchronize the Database with our models and automatically add the
-  // table if it does not exist
+ 
   
   sequelize.sync().then(() => {
-    // create a new "Project" and add it to the database
     Project.create({
       title: 'Project1',
       description: 'First Project',
